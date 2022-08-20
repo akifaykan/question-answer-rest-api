@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import crypto from 'crypto'
+import Question from "./Question-model.js";
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -88,5 +89,12 @@ UserSchema.pre("save", function(next){
         })
     })
 })
+
+// When a user deleted, the questions are deleted.
+/*UserSchema.post("remove", async function(){
+    await Question.deleteMany({
+        user: this._id
+    })
+})*/
 
 export default mongoose.model('User', UserSchema)

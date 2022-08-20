@@ -18,7 +18,7 @@ export const blockUser = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'Block/Unblock Successfull'
+        message: 'Kullanıcı engellendi!'
     })
 }
 
@@ -30,6 +30,6 @@ export const deleteUser = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'User Deleted!'
+        message: 'Kullanıcı silindi!'
     })
 }

@@ -49,3 +49,14 @@ export const editQuestion = async (req, res, next) =>{
         data: question
     })
 }
+
+export const deleteQuestion = async (req, res, next) =>{
+    const {id} = req.params
+
+    await Question.findByIdAndDelete(id)
+
+    res.status(200).json({
+        success: true,
+        message: 'Soru başarıyla silindi!'
+    })
+}
