@@ -1,15 +1,16 @@
-import User from '../models/User-model.js'
+import User from "../models/User-model.js"
+import eah from "express-async-handler"
 
-export const getAllUsers = async (req, res, next) => {
+export const getAllUsers = eah(async (req, res, next) => {
     const users = await User.find()
 
     res.status(200).json({
         success: true,
         data: users
     })
-}
+})
 
-export const userSingle = async (req, res, next) => {
+export const userSingle = eah(async (req, res, next) => {
     const {id} = req.params
     const user = await User.findById(id)
 
@@ -17,4 +18,4 @@ export const userSingle = async (req, res, next) => {
         success: true,
         data: user
     })
-}
+})

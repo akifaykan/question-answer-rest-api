@@ -1,14 +1,14 @@
 import User from "../models/User-model.js"
-import eah from 'express-async-handler'
+import eah from "express-async-handler"
 
-export const adminDashboard = async (req, res, next) => {
+export const adminDashboard = eah(async (req, res, next) => {
     res.status(200).json({
         success: true,
-        message: 'Admin page'
+        message: "Admin page"
     })
-}
+})
 
-export const blockUser = async (req, res, next) => {
+export const blockUser = eah(async (req, res, next) => {
     const {id} = req.params
     const user = await User.findById(id)
 
@@ -18,11 +18,11 @@ export const blockUser = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'Kullanıcı engellendi!'
+        message: "Kullanıcı engellendi!"
     })
-}
+})
 
-export const deleteUser = async (req, res, next) => {
+export const deleteUser = eah(async (req, res, next) => {
     const {id} = req.params
     const user = await User.findById(id)
 
@@ -30,6 +30,6 @@ export const deleteUser = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'Kullanıcı silindi!'
+        message: "Kullanıcı silindi!"
     })
-}
+})

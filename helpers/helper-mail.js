@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer"
 
 export const sendEMail = async (mailOptions) => {
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env

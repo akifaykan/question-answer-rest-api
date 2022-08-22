@@ -1,10 +1,11 @@
-import User from '../models/User-model.js'
+import User from "../models/User-model.js"
+import eah from "express-async-handler"
 import {CustomError} from "../helpers/helper-errors.js"
 import {sendJwtToClient} from "../helpers/helper-token.js"
 import {validateUserInput, comparePassword} from "../helpers/helper-input.js"
 import {sendEMail} from "../helpers/helper-mail.js"
 
-export const register = async (req, res, next) => {
+export const register = eah(async (req, res, next) => {
     const { name, email, password, role } = req.body
 
     const user = await User.create({
@@ -15,32 +16,32 @@ export const register = async (req, res, next) => {
     })
 
     sendJwtToClient(user, res)
-}
+})
 
-export const login = async (req, res, next) => {
+export const login = eah(async (req, res, next) => {
     const { email, password } = req.body
-    const user = await User.findOne({ email }).select('+password')
+    const user = await User.findOne({ email }).select("+password")
 
     if (!validateUserInput(email, password) || !comparePassword(password, user.password)){
-        return next(new CustomError('Girdiğiniz bilgileri kontrol edin!', 400))
+        return next(new CustomError("Girdiğiniz bilgileri kontrol edin!", 400))
     }
 
     sendJwtToClient(user, res)
-}
+})
 
-export const logout = async (req, res, next) => {
+export const logout = eah(async (req, res, next) => {
     return res
         .status(200)
         .cookie({
             httpOnly: true,
             expires: new Date(Date.now()),
-            secure: process.env.NODE_ENV === 'development' ? false : true
+            secure: process.env.NODE_ENV === "development" ? false : true
         })
         .json({
             success: true,
-            message: 'Başarıyla çıkış yaptınız'
+            message: "Başarıyla çıkış yaptınız"
         })
-}
+})
 
 export const getUser = (req, res, next) => {
     res.json({
@@ -52,9 +53,9 @@ export const getUser = (req, res, next) => {
     })
 }
 
-export const imgUpload = async (req, res, next) => {
+export const imgUpload = eah(async (req, res, next) => {
     const imageSaved = {
-        'profile_img': req.savedProfileImg
+        "profile_img": req.savedProfileImg
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, imageSaved, {
@@ -64,17 +65,17 @@ export const imgUpload = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'Image Upload Successfull',
+        message: "Image Upload Successfull",
         data: user
     })
-}
+})
 
-export const forgotPassword = async (req, res, next) => {
+export const forgotPassword = eah(async (req, res, next) => {
     const resetEmail = req.body.email
     const user = await User.findOne({ email: resetEmail })
 
     if (!user) {
-        return next(new CustomError('Bu maile kayıtlı kullanıcı bulunamadı'), 400)
+        return next(new CustomError("Bu maile kayıtlı kullanıcı bulunamadı"), 400)
     }
 
     const resetToken = user.resetPasswordToken()
@@ -87,7 +88,7 @@ export const forgotPassword = async (req, res, next) => {
         await sendEMail({
             from: process.env.SMTP_USER,
             to: resetEmail,
-            subject: 'Parola sıfırlama',
+            subject: "Parola sıfırlama",
             html: `
                 <p>Parolanızı güncellemek için aşağıdaki bağlantıya tıklayın</p>
                 <p><a href="${resetUrl}" target="_blank">Parolayı resetle</a></p>
@@ -96,7 +97,7 @@ export const forgotPassword = async (req, res, next) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Token E-postanıza Gönderildi'
+            message: "Token E-postanıza Gönderildi"
         })
     } catch (err) {
         user.resetToken = undefined
@@ -104,16 +105,16 @@ export const forgotPassword = async (req, res, next) => {
 
         await user.save()
 
-        return next(new CustomError('E-mail gönderilirken hata oluştu!'), 500)
+        return next(new CustomError("E-mail gönderilirken hata oluştu!"), 500)
     }
-}
+})
 
-export const resetPassword = async (req, res, next) => {
+export const resetPassword = eah(async (req, res, next) => {
     const {resettoken} = req.query
     const {password} = req.body
 
     if (!resettoken){
-        return next(new CustomError('Lütfen geçerli bir token sağlayın!', 400))
+        return next(new CustomError("Lütfen geçerli bir token sağlayın!", 400))
     }
 
     let user = await User.findOne({
@@ -122,7 +123,7 @@ export const resetPassword = async (req, res, next) => {
     })
 
     if (!user){
-        return next(new CustomError('Geçersiz kullanıcı veya geçersiz token', 400))
+        return next(new CustomError("Geçersiz kullanıcı veya geçersiz token", 400))
     }
 
     user.password = password
@@ -133,11 +134,11 @@ export const resetPassword = async (req, res, next) => {
 
     res.json({
         success: true,
-        message: 'Parolanız başarıyla güncellendi'
+        message: "Parolanız başarıyla güncellendi"
     })
-}
+})
 
-export const editUser = async (req, res, next) => {
+export const editUser = eah(async (req, res, next) => {
     const editUserInformation = req.body
 
     const user = await User.findByIdAndUpdate(req.user.id, editUserInformation, {
@@ -147,7 +148,7 @@ export const editUser = async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-        message: 'Bilgiler Güncellendi!',
+        message: "Bilgiler Güncellendi!",
         data: user
     })
-}
+})

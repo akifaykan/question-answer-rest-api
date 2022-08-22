@@ -1,5 +1,5 @@
-import express from 'express'
-import eah from "express-async-handler"
+import express from "express"
+import answer from "./router-answer.js"
 import {
     getAllQuestions,
     getQuestion,
@@ -8,28 +8,21 @@ import {
     deleteQuestion,
     likeQuestion,
     unlikeQuestion
-} from '../controllers/controller-question.js'
+} from "../controllers/controller-question.js"
 import {userAccess, questionAccess} from "../middlewares/middleware-access.js"
 import {questionExist} from "../middlewares/middleware-exist.js"
 
 const router = express.Router()
 
-router.get('/', eah(getAllQuestions))
-router.get('/:id', eah(questionExist), eah(getQuestion))
-router.get('/:id/like', [userAccess, eah(questionExist)], eah(likeQuestion))
-router.get('/:id/unlike', [userAccess, eah(questionExist)], eah(unlikeQuestion))
-router.post('/ask', userAccess, eah(newQuestion))
+router.get("/", getAllQuestions)
+router.get("/:id", questionExist, getQuestion)
+router.get("/:id/like", [userAccess, questionExist], likeQuestion)
+router.get("/:id/unlike", [userAccess, questionExist], unlikeQuestion)
+router.post("/ask", userAccess, newQuestion)
+router.put("/:id/edit", [userAccess,questionExist,questionAccess], editQuestion)
+router.delete("/:id/delete", [userAccess,questionExist,questionAccess], deleteQuestion)
 
-router.put('/:id/edit', [
-    userAccess,
-    eah(questionExist),
-    eah(questionAccess)
-], eah(editQuestion))
-
-router.delete('/:id/delete', [
-    userAccess,
-    eah(questionExist),
-    eah(questionAccess)
-], eah(deleteQuestion))
+// Answers Router
+router.use("/:id/answers", questionExist, answer)
 
 export default router

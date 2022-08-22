@@ -4,10 +4,10 @@ export const sendJwtToClient = (user, res) => {
 
     return res
         .status(200)
-        .cookie('access_token', token, {
+        .cookie("access_token", token, {
             httpOnly: true,
             expires: new Date(Date.now() + parseInt(JWT_COOKIE) * 1000 * 60),
-            secure: NODE_ENV === 'development' ? false : true
+            secure: NODE_ENV === "development" ? false : true
         })
         .json({
             success: true,
@@ -20,11 +20,11 @@ export const sendJwtToClient = (user, res) => {
 }
 
 export const isTokenIncluded = req => {
-    return req.headers.authorization && req.headers.authorization.startsWith('Bearer:')
+    return req.headers.authorization && req.headers.authorization.startsWith("Bearer:")
 }
 
 export const getAccessTokenFromHeader = req => {
     const authorization = req.headers.authorization
-    const access_token = authorization.split(' ')[1]
+    const access_token = authorization.split(" ")[1]
     return access_token
 }

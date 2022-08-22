@@ -1,7 +1,7 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcryptjs'
+import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import crypto from 'crypto'
+import crypto from "crypto"
 import Question from "./Question-model.js";
 
 const UserSchema = new mongoose.Schema({
@@ -52,11 +52,11 @@ const UserSchema = new mongoose.Schema({
 
 // Reset Password User
 UserSchema.methods.resetPasswordToken = function (){
-    const randomHex = crypto.randomBytes(15).toString('hex')
+    const randomHex = crypto.randomBytes(15).toString("hex")
     const resetPassToken = crypto
-        .createHash('SHA256')
+        .createHash("SHA256")
         .update(randomHex)
-        .digest('hex')
+        .digest("hex")
 
     this.resetToken = resetPassToken
     this.resetTokenExpire = Date.now() + parseInt(process.env.RESET_PASS_EXPIRE)
@@ -79,7 +79,7 @@ UserSchema.methods.generateJwtFromUser = function(){
 
 // Password hashing middlewares
 UserSchema.pre("save", function(next){
-    if (!this.isModified('password')) next()
+    if (!this.isModified("password")) next()
     bcrypt.genSalt(10, (err, salt) => {
         if (err) next(err)
         bcrypt.hash(this.password, salt, (err, hash) => {
@@ -97,4 +97,4 @@ UserSchema.pre("save", function(next){
     })
 })*/
 
-export default mongoose.model('User', UserSchema)
+export default mongoose.model("User", UserSchema)

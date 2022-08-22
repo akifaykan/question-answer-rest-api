@@ -1,19 +1,19 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import mongoose from 'mongoose'
-import routes from './routes/router-main.js'
-import {customErrorHandler} from './middlewares/middleware-errors.js'
+import express from "express"
+import dotenv from "dotenv"
+import mongoose from "mongoose"
+import routes from "./routes/router-main.js"
+import {customErrorHandler} from "./middlewares/middleware-errors.js"
 
 const app = express()
 
 // dotenv config path
-dotenv.config({ path: './config.env' })
+dotenv.config({ path: "./config.env" })
 
 // Express body json
 app.use(express.json())
 
 // Routes
-app.use('/api', routes)
+app.use("/api", routes)
 
 // Custom Error Handler
 app.use(customErrorHandler)
