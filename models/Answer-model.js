@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import Question from "./Question-model.js"
 
 const AnswerSchema = new mongoose.Schema({
     content: {
@@ -28,6 +29,22 @@ const AnswerSchema = new mongoose.Schema({
             ref: "User"
         }
     ]
+})
+
+AnswerSchema.pre("save", async function(next){
+    if (!this.isModified("user")) return next()
+
+    try {
+        const question = await Question.findById(this.question)
+
+        question.answers.push(this._id)
+
+        await question.save()
+
+        next()
+    } catch (err) {
+        return next(err)
+    }
 })
 
 export default mongoose.model("Answer", AnswerSchema)

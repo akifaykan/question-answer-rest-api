@@ -23,6 +23,6 @@ router.put("/:id/edit", [userAccess,questionExist,questionAccess], editQuestion)
 router.delete("/:id/delete", [userAccess,questionExist,questionAccess], deleteQuestion)
 
 // Answers Router
-router.use("/:id/answers", questionExist, answer)
+router.use("/:question_id/answers", questionExist, answer)
 
 export default router

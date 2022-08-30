@@ -79,7 +79,7 @@ UserSchema.methods.generateJwtFromUser = function(){
 
 // Password hashing middlewares
 UserSchema.pre("save", function(next){
-    if (!this.isModified("password")) next()
+    if (!this.isModified("password")) return next()
     bcrypt.genSalt(10, (err, salt) => {
         if (err) next(err)
         bcrypt.hash(this.password, salt, (err, hash) => {

@@ -38,7 +38,7 @@ const QuestionSchema = new mongoose.Schema({
 })
 
 QuestionSchema.pre("save", function(next){
-    if (!this.isModified("title")) next()
+    if (!this.isModified("title")) return next()
     this.slug = this.makeSlug()
     next()
 })
