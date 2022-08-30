@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 import eah from "express-async-handler"
 import User from "../models/User-model.js"
 import Question from "../models/Question-model.js"
+import Answer from "../models/Answer-model.js"
 import { CustomError } from "../helpers/helper-errors.js"
 import { isTokenIncluded, getAccessTokenFromHeader } from "../helpers/helper-token.js"
 
@@ -33,6 +34,19 @@ export const questionAccess = eah(async (req, res, next) => {
 
     if (question.user != userId){
         return next(new CustomError("Bu soruyu düzenleyemezsiniz!", 403))
+    }
+
+    next()
+})
+
+export const answerAccess = eah(async (req, res, next) => {
+    const userId = req.user.id
+    const answerId = req.params.answer_id
+
+    const answer = await Answer.findById(answerId)
+
+    if (answer.user != userId){
+        return next(new CustomError("Bu cevabı düzenleyemezsiniz!", 403))
     }
 
     next()

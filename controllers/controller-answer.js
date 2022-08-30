@@ -52,3 +52,19 @@ export const getSingleAnswer = eah(async (req, res, next) => {
         data: answer
     })
 })
+
+export const editAnswer = eah(async (req, res, next) => {
+    const {answer_id} = req.params
+    const {content} = req.body
+
+    let answer = await Answer.findById(answer_id)
+
+    answer.content = content
+
+    await answer.save()
+
+    res.status(200).json({
+        success: true,
+        data: answer
+    })
+})
