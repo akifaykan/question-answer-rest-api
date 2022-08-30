@@ -16,13 +16,11 @@ const AnswerSchema = new mongoose.Schema({
         required: true,
         ref: "User"
     },
-    question: [
-        {
-            type: mongoose.Schema.ObjectId,
-            required: true,
-            ref: "Question"
-        }
-    ],
+    question: {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: "Question"
+    },
     likes: [
         {
             type: mongoose.Schema.ObjectId,
