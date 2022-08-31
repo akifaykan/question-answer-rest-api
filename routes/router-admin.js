@@ -5,6 +5,7 @@ import {userExist} from "../middlewares/middleware-exist.js"
 
 const router = express.Router()
 
+// All middleware
 router.use([userAccess, adminAccess])
 
 router.get("/", adminDashboard)

@@ -84,3 +84,40 @@ export const deleteAnswer = eah(async (req, res, next) => {
         message: "Cevap başarıyla silindi"
     })
 })
+
+export const likeAnswer = eah(async (req, res, next) => {
+    const {answer_id} = req.params
+    const answer = await Answer.findById(answer_id)
+
+    if (answer.likes.includes(req.user.id)){
+        return next(new CustomError("Bu cevabı zaten beğendiniz", 400))
+    }
+
+    answer.likes.push(req.user.id)
+
+    await answer.save()
+
+    res.status(200).json({
+        success: true,
+        data: answer
+    })
+})
+
+export const unLikeAnswer = eah(async (req, res, next) => {
+    const {answer_id} = req.params
+    const answer = await Answer.findById(answer_id)
+
+    if (!answer.likes.includes(req.user.id)){
+        return next(new CustomError("Bu cevabı henüz beğenmediniz", 400))
+    }
+
+    const index = answer.likes.indexOf(req.user.id)
+    answer.likes.splice(index, 1)
+
+    await answer.save()
+
+    res.status(200).json({
+        success: true,
+        data: answer
+    })
+})

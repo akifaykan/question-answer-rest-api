@@ -3,7 +3,27 @@ import eah from "express-async-handler"
 import {CustomError} from "../helpers/helper-errors.js"
 
 export const getAllQuestions = eah(async (req, res, next) =>{
-    const questions = await Question.find()
+    let query = Question.find()
+    const populate = true
+    const populateObject = {
+        path: "user",
+        select: "name profile_img"
+    }
+
+    if (req.query.search){
+        const searchObject = {}
+
+        const regex = new RegExp(req.query.search, "i")
+        searchObject["title"] = regex
+
+        query = query.where(searchObject)
+    }
+
+    if (populate){
+        query = query.populate(populateObject)
+    }
+
+    const questions = await query
 
     res.status(200).json({
         success: true,
@@ -85,7 +105,7 @@ export const unlikeQuestion = eah(async (req, res, next) => {
     const question = await Question.findById(id)
 
     if (!question.likes.includes(req.user.id)){
-        return next(new CustomError("Bu soruyu beğenmediniz", 400))
+        return next(new CustomError("Bu soruyu henüz beğenmediniz", 400))
     }
 
     const index = question.likes.indexOf(req.user.id)
