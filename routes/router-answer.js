@@ -4,19 +4,19 @@ import {
     addNewAnswerToQuestion,
     getAllAnswersByQuestion,
     getSingleAnswer,
-    editAnswer
+    editAnswer,
+    deleteAnswer
 } from "../controllers/controller-answer.js"
 import {questionAndAnswerExist} from "../middlewares/middleware-exist.js"
 
 const router = express.Router({ mergeParams: true })
 
-router.post("/", userAccess, addNewAnswerToQuestion)
+const middlewares = [questionAndAnswerExist, userAccess, answerAccess]
+
+router.post("/", middlewares[1], addNewAnswerToQuestion)
 router.get("/", getAllAnswersByQuestion)
-router.get("/:answer_id", questionAndAnswerExist, getSingleAnswer)
-router.put("/:answer_id/edit", [
-    questionAndAnswerExist,
-    userAccess,
-    answerAccess
-], editAnswer)
+router.get("/:answer_id", middlewares[0], getSingleAnswer)
+router.put("/:answer_id/edit", middlewares, editAnswer)
+router.delete("/:answer_id/delete", middlewares, deleteAnswer)
 
 export default router

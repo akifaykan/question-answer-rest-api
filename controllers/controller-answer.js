@@ -36,8 +36,7 @@ export const getAllAnswersByQuestion = eah(async (req, res, next) => {
 
 export const getSingleAnswer = eah(async (req, res, next) => {
     const {answer_id} = req.params
-    const answer = await Answer
-        .findById(answer_id)
+    const answer = await Answer.findById(answer_id)
         .populate({
             path: "question",
             select: "title"
@@ -66,5 +65,22 @@ export const editAnswer = eah(async (req, res, next) => {
     res.status(200).json({
         success: true,
         data: answer
+    })
+})
+
+export const deleteAnswer = eah(async (req, res, next) => {
+    const {answer_id, question_id} = req.params
+
+    await Answer.findByIdAndRemove(answer_id)
+
+    const question = await Question.findById(question_id)
+
+    question.answers.splice(question.answers.indexOf(answer_id), 1)
+
+    await question.save()
+
+    return res.status(200).json({
+        success: true,
+        message: "Cevap başarıyla silindi"
     })
 })

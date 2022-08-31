@@ -14,13 +14,15 @@ import {upload} from "../middlewares/middleware-uploads.js"
 
 const router = express.Router()
 
-router.get("/logout", userAccess, logout)
-router.get("/profile", userAccess, getUser)
+const middleWares = [userAccess, upload]
+
+router.get("/logout", middleWares[0], logout)
+router.get("/profile", middleWares[0], getUser)
 router.post("/register", register)
 router.post("/login", login)
-router.post("/upload", [userAccess, upload], imgUpload)
+router.post("/upload", middleWares, imgUpload)
 router.post("/forgotpassword", forgotPassword)
 router.put("/resetpassword", resetPassword)
-router.put("/edit", userAccess, editUser)
+router.put("/edit", middleWares[0], editUser)
 
 export default router
