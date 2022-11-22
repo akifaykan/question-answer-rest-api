@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import crypto from "crypto"
-import Question from "./Question-model.js";
+import Question from "./Question-model.js"
 
 const UserSchema = new mongoose.Schema({
     name: {

@@ -9,23 +9,39 @@ import {
     likeQuestion,
     unlikeQuestion
 } from "../controllers/controller-question.js"
-import {userAccess, questionAccess} from "../middlewares/middleware-access.js"
+import Question from "../models/Question-model.js"
 import {questionExist} from "../middlewares/middleware-exist.js"
+import {userAccess, questionAccess} from "../middlewares/middleware-access.js"
+import {questionQuery} from "../middlewares/middleware-query-questions.js"
+import {answerQuery} from "../middlewares/middleware-query-answer.js"
 
 const router = express.Router()
 
-const middleWares1 = [userAccess, questionExist]
-const middleWares2 = [userAccess,questionExist,questionAccess]
-
-router.get("/", getAllQuestions)
-router.get("/:id", questionExist, getQuestion)
-router.get("/:id/like", middleWares1, likeQuestion)
-router.get("/:id/unlike", middleWares1, unlikeQuestion)
-router.post("/ask", middleWares1[0], newQuestion)
-router.put("/:id/edit", middleWares2, editQuestion)
-router.delete("/:id/delete", middleWares2, deleteQuestion)
+router.get("/", questionQuery(Question, {
+    population: {
+        path: "user",
+        select: "name profile_img"
+    }
+}), getAllQuestions)
+router.get("/:id", answerQuery(Question, {
+    population: [
+        {
+            path: "user",
+            select: "name profile_img"
+        },
+        {
+            path: "answers",
+            select: "content"
+        }
+    ]
+}), questionExist, getQuestion)
+router.get("/:id/like", userAccess, questionExist, likeQuestion)
+router.get("/:id/unlike", userAccess, questionExist, unlikeQuestion)
+router.post("/ask", userAccess, newQuestion)
+router.put("/:id/edit", userAccess, questionExist, questionAccess, editQuestion)
+router.delete("/:id/delete", userAccess, questionExist, questionAccess, deleteQuestion)
 
 // Answers Router
-router.use("/:question_id/answers", middleWares1[1], answer)
+router.use("/:question_id/answers", questionExist, answer)
 
 export default router

@@ -3,70 +3,11 @@ import eah from "express-async-handler"
 import {CustomError} from "../helpers/helper-errors.js"
 
 export const getAllQuestions = eah(async (req, res, next) =>{
-    let query = Question.find()
-    const populate = true
-    const populateObject = {
-        path: "user",
-        select: "name profile_img"
-    }
-
-    // Search
-    if (req.query.search){
-        const searchObject = {}
-
-        const regex = new RegExp(req.query.search, "i")
-        searchObject["title"] = regex
-
-        query = query.where(searchObject)
-    }
-
-    // Populate
-    if (populate){
-        query = query.populate(populateObject)
-    }
-
-    // Pagination
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 3
-    const startIndex = (page - 1) * limit
-    const endIndex = page * limit
-    const pagination = {}
-    const total = await Question.countDocuments()
-
-    if (startIndex > 0){
-        pagination.previous = {
-            page: page - 1,
-            limit: limit
-        }
-    }
-
-    if (endIndex < total){
-        pagination.next = {
-            page: page + 1,
-            limit: limit
-        }
-    }
-
-    query = query.skip(startIndex).limit(limit)
-
-    const questions = await query
-
-    res.status(200).json({
-        success: true,
-        count: questions.length,
-        pagination: pagination,
-        data: questions
-    })
+    return res.status(200).json(res.queryResults)
 })
 
 export const getQuestion = eah(async (req, res, next) =>{
-    const {id} = req.params
-    const question = await Question.findById(id)
-
-    res.status(200).json({
-        success: true,
-        data: question
-    })
+    return res.status(200).json(res.queryResults)
 })
 
 export const newQuestion = eah(async (req, res, next) =>{
@@ -119,6 +60,7 @@ export const likeQuestion = eah(async (req, res, next) => {
     }
 
     question.likes.push(req.user.id)
+    question.likeCount = question.likes.length
 
     await question.save()
 
@@ -138,6 +80,7 @@ export const unlikeQuestion = eah(async (req, res, next) => {
 
     const index = question.likes.indexOf(req.user.id)
     question.likes.splice(index, 1)
+    question.likeCount = question.likes.length
 
     await question.save()
 
